@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 
 
-
 def save_player_info():
     player_info = playerName.get()
 
@@ -62,7 +61,7 @@ playerName_entry = Entry(sudokumain,textvariable=playerName, width=50,justify='c
 # buttons
 STARTbutton = Button(sudokumain, text="Let's Play", command=save_player_info, width=20, height="1",activeforeground='green',font=("Helvetica", 20, "bold"),pady=5)
 STARTbutton.grid(row=5, column=0,columnspan=1)
-Exitbutton = Button(sudokumain, text="EXIT",command=lambda :sudokumain.quit(), width=20, height="1",activeforeground='red',font=("Helvetica", 20, "bold"),pady=5)
+Exitbutton = Button(sudokumain, text="EXIT",command=lambda :sudokumain.destroy(), width=20, height="1",activeforeground='red',font=("Helvetica", 20, "bold"),pady=5)
 Exitbutton.grid(row=5, column=1,columnspan=2)
 
 sudokumain.mainloop()
