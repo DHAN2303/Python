@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, CENTER, END
+from random import *
+import numpy as np
+
 
 class sudokuApp(tk.Tk):
 
@@ -128,21 +131,74 @@ class easy(tk.Frame):
             return
 
         def easyLavel():
+            i=0
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    i+=1
+                    if i == 3 or i == 4:
+                        widget.insert(0,randint(1,3))
             controller.show_frame(easy)
 
         def normalLavel():
+            i = 0
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    i += 1
+                    if i == 1 or i == 8 or i == 15 or i == 22 or i == 29 or i == 36:
+                        widget.insert(0, randint(1, 6))
             controller.show_frame(normal)
 
         def hardLavel():
+            i = 0
+            base = 3
+            side = base * base
+
+            # pattern for a baseline valid solution
+            def pattern(r, c):
+                return (base * (r % base) + r // base + c) % side
+
+            # randomize rows, columns and numbers (of valid base pattern)
+            def shuffle(s):
+                return sample(s, len(s))
+
+            rBase = range(base)
+            rows = [g * base + r for g in shuffle(rBase) for r in shuffle(rBase)]
+            cols = [g * base + c for g in shuffle(rBase) for c in shuffle(rBase)]
+            nums = shuffle(range(1, base * base + 1))
+
+            # produce board using randomized baseline pattern
+            board = [[nums[pattern(r, c)] for c in cols] for r in rows]
+
+            squares = side * side
+            empties = squares * 3 // 4
+            hiddenBoard = board
+
+            for p in sample(range(squares), empties):
+                # print(p)
+                # print(p//side)
+                # print(p%side)
+                hiddenBoard[p // side][p % side] = 0
+
+            row2=0
+            colum2=0
+
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    widget.insert(0, hiddenBoard[row2][colum2])
+                    colum2 += 1
+                    if colum2 == 8:
+                        row2+=1
+                        colum2 = 0
+
+
+
+
+
+
+
             controller.show_frame(hard)
 
         # ======================================Create the buttons============================
@@ -204,21 +260,74 @@ class normal(tk.Frame):
             return
 
         def easyLavel():
+            i = 0
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    i += 1
+                    if i == 3 or i == 4:
+                        widget.insert(0, randint(1, 3))
             controller.show_frame(easy)
 
         def normalLavel():
+            i = 0
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    i += 1
+                    if i == 1 or i == 8 or i == 15 or i == 22 or i == 29 or i == 36:
+                        widget.insert(0, randint(1, 6))
             controller.show_frame(normal)
 
         def hardLavel():
+            i = 0
+            base = 3
+            side = base * base
+
+            # pattern for a baseline valid solution
+            def pattern(r, c):
+                return (base * (r % base) + r // base + c) % side
+
+            # randomize rows, columns and numbers (of valid base pattern)
+            def shuffle(s):
+                return sample(s, len(s))
+
+            rBase = range(base)
+            rows = [g * base + r for g in shuffle(rBase) for r in shuffle(rBase)]
+            cols = [g * base + c for g in shuffle(rBase) for c in shuffle(rBase)]
+            nums = shuffle(range(1, base * base + 1))
+
+            # produce board using randomized baseline pattern
+            board = [[nums[pattern(r, c)] for c in cols] for r in rows]
+
+            squares = side * side
+            empties = squares * 3 // 4
+            hiddenBoard = board
+
+            for p in sample(range(squares), empties):
+                # print(p)
+                # print(p//side)
+                # print(p%side)
+                hiddenBoard[p // side][p % side] = 0
+
+            row2=0
+            colum2=0
+
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    widget.insert(0, hiddenBoard[row2][colum2])
+                    colum2 += 1
+                    if colum2 == 8:
+                        row2+=1
+                        colum2 = 0
+
+
+
+
+
+
+
             controller.show_frame(hard)
 
         # ======================================Create the buttons============================
@@ -246,9 +355,40 @@ class normal(tk.Frame):
 class hard(tk.Frame):
 
     def __init__(self, parent, controller):
+
         tk.Frame.__init__(self, parent)
         tk.Label(self, text='CLICK GENERATE, FILL IN THE NUMBERS AND CLICK SOLVE', font=("Arial", 20, "bold"),
               bg='#EEC900', width=88, fg='black').grid(row=0, column=0, columnspan=10)
+
+        base = 3
+        side = base * base
+
+        # pattern for a baseline valid solution
+        def pattern(r, c):
+            return (base * (r % base) + r // base + c) % side
+
+        # randomize rows, columns and numbers (of valid base pattern)
+        def shuffle(s):
+            return sample(s, len(s))
+
+        rBase = range(base)
+        rows = [g * base + r for g in shuffle(rBase) for r in shuffle(rBase)]
+        cols = [g * base + c for g in shuffle(rBase) for c in shuffle(rBase)]
+        nums = shuffle(range(1, base * base + 1))
+
+        # produce board using randomized baseline pattern
+        board = [[nums[pattern(r, c)] for c in cols] for r in rows]
+        arr = np.array(board)
+        arr2 = arr.copy()
+        print(arr)
+        squares = side * side
+        empties = squares * 3 // 4
+
+        for p in sample(range(squares), empties):
+            arr2[p // side][p % side] = 0
+        print(arr2)
+
+
         def only_one_numbers(char):
             return char.isdigit()
 
@@ -270,25 +410,59 @@ class hard(tk.Frame):
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
 
+
+
         def solve():
-            return
+            a = 0
+            b = 0
+            for widget in self.winfo_children():
+                if isinstance(widget, tk.Entry):
+                    print(widget.get())
+                    print(arr[a][b])
+                    if str(arr[a][b]) != str(widget.get()):
+                        widget.delete(0, tk.END)
+                        widget.insert(0, str(arr[a][b]))
+                        widget.configure(fg='red')
+                    b += 1
+                    if b == 9:
+                        a += 1
+                        b = 0
+
 
         def easyLavel():
+            i = 0
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    i += 1
+                    if i == 3 or i == 4:
+                        widget.insert(0, randint(1, 3))
             controller.show_frame(easy)
 
         def normalLavel():
+            i = 0
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    i += 1
+                    if i == 1 or i == 8 or i == 15 or i == 22 or i == 29 or i == 36:
+                        widget.insert(0, randint(1, 6))
             controller.show_frame(normal)
 
         def hardLavel():
+            i = 0
+            row2=0
+            colum2=0
+
             for widget in self.winfo_children():
                 if isinstance(widget, tk.Entry):
                     widget.delete(0, tk.END)
+                    widget.configure(fg='black')
+                    widget.insert(0, arr2[row2][colum2])
+                    colum2 += 1
+                    if colum2 == 9:
+                        row2+=1
+                        colum2 = 0
             controller.show_frame(hard)
 
 
